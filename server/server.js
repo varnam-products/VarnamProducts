@@ -194,11 +194,11 @@ mongoose
     logger.info('MongoDB Atlas connected successfully');
     startAbandonedCartCron();
 
-    if (process.env.NODE_ENV !== "production") {
+    
       app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
       });
-    }
+    
   })
   .catch((error) => {
     logger.error('Database connection failure', { error: error.message });
