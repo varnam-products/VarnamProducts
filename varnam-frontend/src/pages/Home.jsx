@@ -355,6 +355,8 @@ function HeroBanner({ banners, loading }) {
             />
           ) : (
             <img src={b.image} alt={b.title || 'Banner'} draggable={false}
+              fetchpriority={i === 0 ? 'high' : 'low'}
+              loading={i === 0 ? 'eager' : 'lazy'}
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
           )}
           <div style={{ position: 'absolute', inset: 0, zIndex: 10, background: 'linear-gradient(90deg,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.32) 55%,transparent 100%)' }} />
