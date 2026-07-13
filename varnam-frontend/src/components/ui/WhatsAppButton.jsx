@@ -14,9 +14,7 @@ export default function WhatsAppButton({
   const [phone, setPhone] = useState(fallbackPhone)
   const [visible, setVisible] = useState(false)
   const [showTip, setShowTip] = useState(false)
-
-  console.log(phone);
-  
+ 
 
   // Pull store phone number from settings
   useEffect(() => {
