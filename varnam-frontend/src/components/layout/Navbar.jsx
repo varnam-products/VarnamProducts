@@ -100,7 +100,7 @@ function CategoriesDropdown({ categories }) {
       onMouseLeave={hide}
     >
       <button
-        className={`relative flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-body tracking-wide transition-colors duration-200 group
+        className={`relative flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-body font-semibold tracking-wide transition-colors duration-200 group
           ${open ? 'text-brand-green' : 'text-stone-600 hover:text-brand-green'}`}
         aria-expanded={open}
         aria-haspopup="true"
@@ -492,7 +492,7 @@ function DesktopLink({ to, children }) {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `relative px-3.5 py-2 text-[13px] font-body tracking-wide transition-colors duration-200 group
+        `relative px-3.5 py-2 text-[13px] font-body font-semibold tracking-wide transition-colors duration-200 group
         ${isActive ? 'text-brand-green' : 'text-stone-600 hover:text-brand-green'}`
       }
     >
@@ -527,8 +527,8 @@ function MobileLink({ to, onClick, children }) {
       to={to}
       onClick={onClick}
       className={({ isActive }) =>
-        `drawer-item flex items-center px-3 py-3 rounded-xl text-[13px] font-body transition-colors duration-150
-        ${isActive ? 'bg-brand-green/10 text-brand-green font-medium' : 'text-stone-700 hover:bg-stone-100/80'}`
+        `drawer-item flex items-center px-3 py-3 rounded-xl text-[13px] font-body font-semibold transition-colors duration-150
+        ${isActive ? 'bg-brand-green/10 text-brand-green' : 'text-stone-700 hover:bg-stone-100/80'}`
       }
     >
       {children}
