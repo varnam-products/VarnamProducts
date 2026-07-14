@@ -398,7 +398,7 @@ function HeroBanner({ banners, loading }) {
           ].map(({ label, pos, icon, fn }) => (
             <button key={label} onClick={fn} aria-label={`${label} slide`}
               className="hidden md:flex opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-              style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', zIndex: 30, ...pos, width: 42, height: 42, borderRadius: '50%', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', color: '#fff', cursor: 'pointer', alignItems: 'center', justifyContent: 'center' }}>
+              style={{ WebkitAppearance: 'none', appearance: 'none', position: 'absolute', top: '50%', transform: 'translateY(-50%)', zIndex: 30, ...pos, width: 42, height: 42, borderRadius: '50%', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', color: '#fff', cursor: 'pointer', outline: 'none', alignItems: 'center', justifyContent: 'center' }}>
               {icon}
             </button>
           ))}
@@ -409,7 +409,7 @@ function HeroBanner({ banners, loading }) {
           {safeList.map((_, i) => (
             <button key={i} ref={el => dotsRef.current[i] = el}
               onClick={() => go(i)} aria-label={`Slide ${i + 1}`}
-              style={{ minWidth: 24, minHeight: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer', padding: 0, background: 'transparent' }}>
+              style={{ WebkitAppearance: 'none', appearance: 'none', minWidth: 24, minHeight: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', outline: 'none', boxShadow: 'none', cursor: 'pointer', padding: 0, margin: 0, background: 'transparent', backgroundColor: 'transparent', borderRadius: 99 }}>
               <span style={{ height: 7, width: i === 0 ? 28 : 8, borderRadius: 99, background: i === 0 ? '#FDF6EC' : 'rgba(253,246,236,0.35)', pointerEvents: 'none' }} />
             </button>
           ))}
