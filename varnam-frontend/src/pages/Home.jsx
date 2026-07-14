@@ -407,11 +407,12 @@ function HeroBanner({ banners, loading }) {
       {safeList.length > 1 && (
         <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 30, display: 'flex', gap: 8, alignItems: 'center' }}>
           {safeList.map((_, i) => (
-            <button key={i} ref={el => dotsRef.current[i] = el}
+            <button key={i}
               onClick={() => go(i)} aria-label={`Slide ${i + 1}`}
-              style={{ WebkitAppearance: 'none', appearance: 'none', minWidth: 24, minHeight: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', outline: 'none', boxShadow: 'none', cursor: 'pointer', padding: 0, margin: 0, background: 'transparent', backgroundColor: 'transparent', borderRadius: 99 }}>
-              <span style={{ height: 7, width: i === 0 ? 28 : 8, borderRadius: 99, background: i === 0 ? '#FDF6EC' : 'rgba(253,246,236,0.35)', pointerEvents: 'none' }} />
+              style={{ WebkitAppearance: 'none', appearance: 'none', minWidth: 24, minHeight: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', outline: 'none', boxShadow: 'none', cursor: 'pointer', padding: 0, margin: 0, background: 'transparent', backgroundColor: 'transparent' }}>
+              <span ref={el => dotsRef.current[i] = el} style={{ height: 7, width: i === 0 ? 28 : 8, borderRadius: 99, background: i === 0 ? '#FDF6EC' : 'rgba(253,246,236,0.35)', pointerEvents: 'none' }} />
             </button>
+            
           ))}
         </div>
       )}
