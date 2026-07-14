@@ -1,0 +1,28 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "varnamfoods.com" }],
+      "destination": "https://www.varnamfoods.com/$1",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/shop",
+      "destination": "/shop/index.html"
+    },
+    {
+      "source": "/b2b-wholesale",
+      "destination": "/b2b-wholesale/index.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
