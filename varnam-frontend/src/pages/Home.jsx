@@ -30,22 +30,22 @@ const ChevronLeft = ({ size = 16 }) => (
 )
 
 // Trust bar icons
-// stroke is cream (#FDF6EC) so icons are visible on the dark trust bar background
+// stroke is green (#2D6A4F) so icons are visible on the light trust bar background
 const IconLeaf = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FDF6EC" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2D6A4F" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
     <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/>
     <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
   </svg>
 )
 
 const IconDroplet = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FDF6EC" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2D6A4F" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
   </svg>
 )
 
 const IconTruck = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FDF6EC" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2D6A4F" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
     <rect x="1" y="3" width="15" height="13" rx="1"/>
     <path d="M16 8h4l3 3v5h-7V8z"/>
     <circle cx="5.5" cy="18.5" r="2.5"/>
@@ -54,7 +54,7 @@ const IconTruck = () => (
 )
 
 const IconShield = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FDF6EC" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2D6A4F" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
     <polyline points="9 12 11 14 15 10"/>
   </svg>
@@ -471,111 +471,35 @@ function TrustBar() {
       title: 'Free Shipping',
       sub: `On orders above ₹${freeShippingThreshold}`,
       stat: `${freeShippingThreshold}+`,
-      glow: 'rgba(200,137,58,0.15)',
     },
     TRUST_STATIC[2],
   ]
 
   useGSAP(() => {
     gsap.fromTo(
-      ref.current?.querySelectorAll('.trust-item'),
-      { y: 18, opacity: 0 },
+      ref.current?.querySelectorAll('.trust-bar-item'),
+      { y: 22, opacity: 0 },
       {
-        y: 0, opacity: 1, stagger: 0.09, duration: 0.55, ease: 'power3.out',
+        y: 0, opacity: 1, stagger: 0.1, duration: 0.55, ease: 'power3.out',
         scrollTrigger: { trigger: ref.current, start: 'top 93%' },
       }
     )
   }, { scope: ref })
 
   return (
-    <div
-      ref={ref}
-      style={{
-        position: 'relative', overflow: 'hidden',
-        background: 'linear-gradient(160deg, #0D2B1E 0%, #1B4332 50%, #163829 100%)',
-        borderBottom: '1px solid rgba(82,183,136,0.12)',
-      }}
-    >
-      {/* subtle radial glow top-right */}
-      <div style={{
-        position: 'absolute', top: '-60%', right: '-5%',
-        width: '40%', height: '250%',
-        background: 'radial-gradient(ellipse, rgba(200,137,58,0.10) 0%, transparent 65%)',
-        pointerEvents: 'none',
-      }} />
-
-      {/* particle-like dots â€” static SVG, no JS needed here */}
-      <svg aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', opacity: 0.06 }}
-        viewBox="0 0 1200 100" preserveAspectRatio="xMidYMid slice">
-        {[40,120,220,340,460,560,660,760,860,960,1060,1140].map((x, i) => (
-          <circle key={i} cx={x} cy={i % 2 === 0 ? 28 : 68} r={i % 3 === 0 ? 3 : 2} fill="#52B788" />
-        ))}
-      </svg>
-
-      <div className="container-main" style={{ position: 'relative', zIndex: 2 }}>
-        <div className="trust-grid">
-          {TRUST.map(({ Icon, title, sub, stat, glow }, i) => (
-            <div
-              key={i}
-              className="trust-item"
-              style={{
-                position: 'relative', overflow: 'hidden',
-                display: 'flex', alignItems: 'center', gap: 14,
-                padding: '22px 20px',
-                borderRight: i < 3 ? '1px solid rgba(255,255,255,0.07)' : 'none',
-                transition: 'background 0.3s',
-                cursor: 'default',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
-            >
-              {/* per-item corner glow */}
-              <div style={{
-                position: 'absolute', top: -20, right: -20,
-                width: 70, height: 70, borderRadius: '50%',
-                background: `radial-gradient(circle, ${glow} 0%, transparent 70%)`,
-                pointerEvents: 'none',
-              }} />
-
-              {/* icon box */}
-              <div style={{
-                flexShrink: 0,
-                width: 44, height: 44, borderRadius: 13,
-                background: 'linear-gradient(135deg, rgba(82,183,136,0.18) 0%, rgba(45,106,79,0.22) 100%)',
-                border: '1px solid rgba(82,183,136,0.2)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 3px 12px rgba(0,0,0,0.2)',
-              }}>
+    <div ref={ref} className="trust-bar-section">
+      <div className="container-main">
+        <div className="trust-bar-strip">
+          {TRUST.map(({ Icon, title, sub, stat }, i) => (
+            <div key={i} className="trust-bar-item">
+              <div className="trust-bar-badge">
                 <Icon />
               </div>
-
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
-                  <p style={{
-                    fontFamily: 'var(--font-body)', fontWeight: 600,
-                    color: '#FDF6EC', fontSize: 13, lineHeight: 1.3, margin: 0,
-                  }}>
-                    {title}
-                  </p>
-                  {/* stat pill */}
-                  <span style={{
-                    fontFamily: 'var(--font-body)', fontSize: 9, fontWeight: 700,
-                    color: '#E9B87A', letterSpacing: '0.08em',
-                    background: 'rgba(200,137,58,0.18)',
-                    border: '1px solid rgba(200,137,58,0.25)',
-                    borderRadius: 99, padding: '2px 7px',
-                    whiteSpace: 'nowrap',
-                  }}>
-                    {stat}
-                  </span>
-                </div>
-                <p style={{
-                  fontFamily: 'var(--font-body)', color: 'rgba(253,246,236,0.45)',
-                  fontSize: 11, margin: 0, lineHeight: 1.4,
-                }}>
-                  {sub}
-                </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 4 }}>
+                <p className="trust-bar-title">{title}</p>
+                <span className="trust-bar-stat">{stat}</span>
               </div>
+              <p className="trust-bar-sub">{sub}</p>
             </div>
           ))}
         </div>
