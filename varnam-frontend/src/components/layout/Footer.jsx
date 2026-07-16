@@ -296,6 +296,17 @@ export default function Footer() {
           </p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <span className="text-[11px] font-body text-neutral-700 tracking-widest uppercase">Pure · Natural · Cold Pressed</span>
+            <span className="text-[11px] font-body text-neutral-600">
+              Powered by{' '}
+              <a
+                href="https://livinstudio2026-debug.github.io/Portfolio-Livin-Studio/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-neutral-500 hover:text-brand-amber-light transition-colors duration-150"
+              >
+                Leo
+              </a>
+            </span>
           </div>
         </div>
       </div>
