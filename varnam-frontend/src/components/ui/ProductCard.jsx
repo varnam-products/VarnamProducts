@@ -87,6 +87,7 @@ export default function ProductCard({ product, showStockBadge = false, className
     gsap.to(infoRef.current, { y: 0, opacity: 1, duration: 0.28, ease: 'power3.out' })
     // Add-to-cart button highlight
     if (!outOfStock && !inCart && btnRef.current) {
+      gsap.killTweensOf(btnRef.current, 'background')
       gsap.to(btnRef.current, {
         background: '#1B4332',
         duration: 0.2,
@@ -105,6 +106,7 @@ export default function ProductCard({ product, showStockBadge = false, className
     gsap.to(overlayRef.current, { opacity: 0, duration: 0.25 })
     gsap.to(infoRef.current, { y: 8, opacity: 0, duration: 0.2 })
     if (!outOfStock && !inCart && btnRef.current) {
+      gsap.killTweensOf(btnRef.current, 'background')
       gsap.to(btnRef.current, { background: '#2D6A4F', duration: 0.2 })
     }
   }
@@ -116,6 +118,12 @@ export default function ProductCard({ product, showStockBadge = false, className
     if (outOfStock || adding || !defaultVariant) return
 
     setAdding(true)
+    // Stop any hover color tween in flight and drop its manual inline
+    // background — otherwise on touch devices (no mouseleave after tap)
+    // the button can get stuck on the dark hover color instead of
+    // switching to the light "in cart" style.
+    gsap.killTweensOf(btnRef.current, 'background')
+    gsap.set(btnRef.current, { clearProps: 'background' })
     // Button bounce
     gsap.fromTo(btnRef.current,
       { scale: 0.88 },
@@ -262,7 +270,7 @@ export default function ProductCard({ product, showStockBadge = false, className
             }}>
               ₹{minPrice}
             </span>
-            {hasDiscount && !hasRange && (
+            {hasDiscount && (
               <span style={{
                 fontFamily: 'var(--font-body)', fontSize: 13,
                 color: '#B8AFA0', textDecoration: 'line-through',
