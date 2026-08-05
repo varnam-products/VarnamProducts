@@ -138,19 +138,52 @@ export const getFeaturedProducts = async (req, res) => {
   }
 };
 
-// @desc    Search products using text index (Public)
+// Escape regex special characters so raw user input can't break or exploit the pattern
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+// @desc    Search products using text index + partial/prefix match fallback (Public)
 // @route   GET /api/products/search
 export const searchProducts = async (req, res) => {
   try {
     const { q } = req.query;
     if (!q) return res.status(400).json({ success: false, message: 'Search query parameter "q" missing' });
 
-    const products = await Product.find(
-      { $text: { $search: q }, active: true },
-      { score: { $meta: 'textScore' } }
-    )
-      .sort({ score: { $meta: 'textScore' } })
-      .populate('category', 'name slug');
+    const trimmed = q.trim();
+    const partialRegex = new RegExp(escapeRegex(trimmed), 'i');
+
+    // $text only matches whole words/stems, so an incomplete word like "coc" would
+    // never match "coconut". Run it for relevance-ranked whole-word hits, and union
+    // in a regex match (name/description/shortDescription) to catch partial/prefix
+    // typing. Regex results without a text score are ranked after scored ones.
+    const [textMatches, regexMatches] = await Promise.all([
+      Product.find(
+        { $text: { $search: trimmed }, active: true },
+        { score: { $meta: 'textScore' } }
+      )
+        .sort({ score: { $meta: 'textScore' } })
+        .populate('category', 'name slug')
+        .lean(),
+      Product.find({
+        active: true,
+        $or: [
+          { name: partialRegex },
+          { description: partialRegex },
+          { shortDescription: partialRegex },
+        ],
+      })
+        .populate('category', 'name slug')
+        .lean(),
+    ]);
+
+    const seen = new Set();
+    const products = [];
+    for (const p of [...textMatches, ...regexMatches]) {
+      const id = p._id.toString();
+      if (!seen.has(id)) {
+        seen.add(id);
+        products.push(p);
+      }
+    }
 
     res.status(200).json({ success: true, count: products.length, data: products });
   } catch (error) {
