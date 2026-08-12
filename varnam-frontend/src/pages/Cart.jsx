@@ -645,6 +645,109 @@ function OrderSummary({ items, totals, settings, onCheckout, isAuthenticated }) 
   )
 }
 
+/* ── Clear cart confirmation modal ──────────────────────────────────────── */
+function ClearCartModal({ itemCount, onConfirm, onClose }) {
+  const [loading, setLoading]  = useState(false)
+  const overlayRef = useRef(null)
+  const cardRef    = useRef(null)
+
+  useEffect(() => {
+    gsap.fromTo(overlayRef.current, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: 'power2.out' })
+    gsap.fromTo(cardRef.current, { y: 28, opacity: 0, scale: 0.97 }, { y: 0, opacity: 1, scale: 1, duration: 0.32, ease: 'power3.out' })
+  }, [])
+
+  const animateClose = (cb) => {
+    gsap.to(cardRef.current,    { y: 16, opacity: 0, scale: 0.97, duration: 0.2, ease: 'power2.in' })
+    gsap.to(overlayRef.current, { opacity: 0, duration: 0.22, ease: 'power2.in', onComplete: cb })
+  }
+
+  const handleConfirm = () => {
+    setLoading(true)
+    animateClose(onConfirm)
+  }
+
+  return (
+    <div ref={overlayRef} style={{
+      position: 'fixed', inset: 0, zIndex: 1000,
+      background: 'rgba(18,38,28,0.55)', backdropFilter: 'blur(3px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
+    }} onClick={e => { if (e.target === overlayRef.current && !loading) animateClose(onClose) }}>
+
+      <div ref={cardRef} style={{
+        width: '100%', maxWidth: 380, borderRadius: 20, overflow: 'hidden',
+        background: '#fff', boxShadow: '0 20px 60px rgba(0,0,0,0.18)',
+      }}>
+        <div style={{ height: 4, background: 'linear-gradient(90deg, #EF4444, #F59E0B, #EF4444)' }} />
+
+        <div style={{ padding: '24px 24px 0', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{
+              width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
+              background: 'linear-gradient(135deg, #EF4444, #DC2626)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 4px 14px rgba(239,68,68,0.28)', color: '#fff',
+            }}>
+              <IconTrash />
+            </div>
+            <div>
+              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 17, color: '#1B4332', margin: 0 }}>
+                Clear your cart?
+              </h3>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: '#8A9E92', margin: '2px 0 0' }}>
+                This action cannot be undone
+              </p>
+            </div>
+          </div>
+          {!loading && (
+            <button onClick={() => animateClose(onClose)} style={{
+              background: 'none', border: 'none', cursor: 'pointer', padding: 4,
+              color: '#A89F8C', borderRadius: 8, display: 'flex', alignItems: 'center',
+            }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          )}
+        </div>
+
+        <div style={{ padding: '18px 24px 24px' }}>
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: '#6B7D73', margin: '0 0 20px', lineHeight: 1.6 }}>
+            You're about to remove {itemCount} item{itemCount !== 1 ? 's' : ''} from your cart. You'll need to add them again if you change your mind.
+          </p>
+
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button onClick={() => !loading && animateClose(onClose)} disabled={loading} style={{
+              flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: '#fff', color: '#26221C', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14,
+              padding: '12px 16px', borderRadius: 12, border: '1.5px solid #E8E0D0',
+              cursor: loading ? 'not-allowed' : 'pointer', transition: 'all 0.18s',
+            }}
+              onMouseEnter={e => { if (!loading) { e.currentTarget.style.borderColor = '#D4CBB5'; e.currentTarget.style.background = '#FAFAF7' } }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#E8E0D0'; e.currentTarget.style.background = '#fff' }}>
+              Keep items
+            </button>
+            <button onClick={handleConfirm} disabled={loading} style={{
+              flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+              background: loading ? '#F87171' : 'linear-gradient(135deg, #EF4444, #DC2626)',
+              color: '#fff', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14,
+              padding: '12px 16px', borderRadius: 12, border: 'none',
+              cursor: loading ? 'not-allowed' : 'pointer', boxShadow: '0 4px 14px rgba(239,68,68,0.28)', transition: 'all 0.2s',
+            }}
+              onMouseEnter={e => { if (!loading) e.currentTarget.style.transform = 'translateY(-1px)' }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)' }}>
+              {loading ? (
+                <><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ animation: 'spin 0.8s linear infinite' }}><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg> Clearing…</>
+              ) : (
+                <><IconTrash /> Clear cart</>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+    </div>
+  )
+}
+
 /* ── Main page ───────────────────────────────────────────────────────────── */
 export default function Cart() {
   const navigate = useNavigate()
@@ -659,6 +762,9 @@ export default function Cart() {
 
   // Guest OTP modal state
   const [showOtpModal, setShowOtpModal] = useState(false)
+
+  // Clear cart confirmation modal state
+  const [showClearModal, setShowClearModal] = useState(false)
 
   useEffect(() => { fetchSettings() }, [fetchSettings])
 
@@ -699,14 +805,18 @@ export default function Cart() {
 
   const handleClearCart = () => {
     if (!items.length) return
-    if (!window.confirm('Remove all items from your cart?')) return
+    setShowClearModal(true)
+  }
+
+  const confirmClearCart = useCallback(() => {
+    setShowClearModal(false)
     const rows = listRef.current?.querySelectorAll('.cart-row')
     if (rows?.length) {
       gsap.to(rows, { opacity: 0, x: -20, stagger: 0.04, duration: 0.3, ease: 'power2.in', onComplete: clearCart })
     } else {
       clearCart()
     }
-  }
+  }, [clearCart])
 
   const t = totals()
 
@@ -798,6 +908,14 @@ export default function Cart() {
         <GuestOtpModal
           onVerified={handleGuestVerified}
           onClose={() => setShowOtpModal(false)}
+        />
+      )}
+
+      {showClearModal && (
+        <ClearCartModal
+          itemCount={items.reduce((s, i) => s + i.quantity, 0)}
+          onConfirm={confirmClearCart}
+          onClose={() => setShowClearModal(false)}
         />
       )}
     </PageTransition>
