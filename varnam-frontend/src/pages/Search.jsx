@@ -234,7 +234,7 @@ export default function Search() {
       <div style={{ minHeight: '80vh', paddingBottom: 64 }}>
 
         {/* ── Search bar hero ─────────────────────────────────────────── */}
-        <div style={{
+        <div className="search-hero" style={{
           background: 'linear-gradient(135deg, #1B4332 0%, #2D6A4F 100%)',
           padding: '44px 0 40px',
         }}>
@@ -242,13 +242,13 @@ export default function Search() {
             <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'rgba(253,246,236,0.55)', letterSpacing: '0.2em', textTransform: 'uppercase', margin: '0 0 10px' }}>
               Search
             </p>
-            <h1 style={{ fontFamily: 'var(--font-heading)', color: '#FDF6EC', fontSize: 'clamp(1.5rem,3vw,2.2rem)', margin: '0 0 24px', lineHeight: 1.2 }}>
+            <h1 style={{ fontFamily: 'var(--font-heading)', color: '#FDF6EC', fontSize: 'clamp(1.4rem,5vw,2.2rem)', margin: '0 0 20px', lineHeight: 1.2 }}>
               Find what you're looking for
             </h1>
 
             {/* Input */}
             <form onSubmit={handleSubmit} style={{ position: 'relative', maxWidth: 600 }}>
-              <div style={{ position: 'absolute', left: 18, top: '50%', transform: 'translateY(-50%)', color: query ? '#2D6A4F' : '#A89F8C', pointerEvents: 'none', display: 'flex' }}>
+              <div style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: query ? '#2D6A4F' : '#A89F8C', pointerEvents: 'none', display: 'flex' }}>
                 <SearchIcon />
               </div>
               <input
@@ -260,11 +260,13 @@ export default function Search() {
                 spellCheck="false"
                 style={{
                   width: '100%',
-                  padding: '15px 50px 15px 52px',
+                  padding: '15px 48px 15px 46px',
                   borderRadius: 16,
                   border: '2px solid rgba(255,255,255,0.12)',
                   background: 'rgba(255,255,255,0.96)',
-                  fontFamily: 'var(--font-body)', fontSize: 15, color: '#26221C',
+                  // 16px min font-size prevents iOS Safari from auto-zooming
+                  // the whole page when the input gets focus on mobile.
+                  fontFamily: 'var(--font-body)', fontSize: 16, color: '#26221C',
                   outline: 'none', boxSizing: 'border-box',
                   boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
                   transition: 'border-color 0.2s',
@@ -276,7 +278,7 @@ export default function Search() {
               {inputValue && (
                 <button type="button" onClick={handleClear}
                   style={{
-                    position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)',
+                    position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
                     width: 28, height: 28, borderRadius: '50%', border: 'none',
                     background: '#E8E0D0', color: '#5C5548', cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -344,10 +346,17 @@ export default function Search() {
         </div>
       </div>
 
-      {/* Responsive grid */}
+      {/* Responsive grid — degrades all the way to 1 column on phones so
+         cards never get squeezed to the point of overlapping/wrapping. */}
       <style>{`
-        @media (max-width: 1023px) { .search-grid { grid-template-columns: repeat(3,1fr) !important; } }
-        @media (max-width: 767px)  { .search-grid { grid-template-columns: repeat(2,1fr) !important; gap: 12px !important; } }
+        @media (max-width: 1279px) { .search-grid { grid-template-columns: repeat(3,1fr) !important; } }
+        @media (max-width: 1023px) { .search-grid { grid-template-columns: repeat(2,1fr) !important; gap: 14px !important; } }
+        @media (max-width: 639px)  { .search-grid { grid-template-columns: repeat(2,1fr) !important; gap: 10px !important; } }
+        @media (max-width: 420px)  { .search-grid { grid-template-columns: repeat(1,1fr) !important; gap: 12px !important; } }
+
+        @media (max-width: 639px) {
+          .search-hero { padding: 32px 0 28px !important; }
+        }
       `}</style>
     </PageTransition>
   )
