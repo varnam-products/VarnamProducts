@@ -6,7 +6,7 @@ import slugify from 'slugify';
 // @route   GET /api/products
 export const getProducts = async (req, res) => {
   try {
-    const { minPrice, maxPrice, sort, page = 1, limit = 12 } = req.query;
+    const { minPrice, maxPrice, sort, page = 1, limit = 12, category } = req.query;
 
     // effectivePrice = the cheapest variant's selling price (discountPrice when set > 0,
     // otherwise that variant's price), taken as the minimum across all variants. This is
@@ -30,6 +30,21 @@ export const getProducts = async (req, res) => {
 
     // Build the match stage — always filter active products first
     const matchStage = { active: true };
+
+    // Category filter — accepts a category slug so it can be combined
+    // with price/sort/pagination in a single query (unlike the old
+    // category-only endpoint below).
+    if (category) {
+      const categoryDoc = await Category.findOne({ slug: category, active: true }).select('_id');
+      if (!categoryDoc) {
+        return res.status(200).json({
+          success: true,
+          pagination: { total: 0, page: Number(page), pages: 1 },
+          data: [],
+        });
+      }
+      matchStage.category = categoryDoc._id;
+    }
 
     // Price range filter against effective selling price using $expr
     if (minPrice || maxPrice) {
