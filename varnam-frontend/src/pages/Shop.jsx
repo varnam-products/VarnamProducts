@@ -193,7 +193,7 @@ const CategorySearch = ({ categories, onSelect, activeSlug }) => {
 };
 
 // ─── Price Slider Component ─────────────────────────────────────────────────
-const PriceSlider = ({ minVal, maxVal, onApply, disabled }) => {
+const PriceSlider = ({ minVal, maxVal, onApply }) => {
   const [minPrice, setMinPrice] = useState(minVal || '');
   const [maxPrice, setMaxPrice] = useState(maxVal || '');
 
@@ -204,7 +204,6 @@ const PriceSlider = ({ minVal, maxVal, onApply, disabled }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (disabled) return;
     onApply({ min: minPrice, max: maxPrice });
   };
 
@@ -229,8 +228,7 @@ const PriceSlider = ({ minVal, maxVal, onApply, disabled }) => {
                 placeholder="0"
                 value={minPrice}
                 onChange={e => setMinPrice(e.target.value)}
-                disabled={disabled}
-                className="w-full pl-7 pr-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm text-stone-700 placeholder:text-stone-300 focus:outline-none focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100 transition-all disabled:opacity-50 disabled:bg-neutral-100"
+                className="w-full pl-7 pr-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm text-stone-700 placeholder:text-stone-300 focus:outline-none focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100 transition-all"
               />
             </div>
           </div>
@@ -244,8 +242,7 @@ const PriceSlider = ({ minVal, maxVal, onApply, disabled }) => {
                 placeholder="Any"
                 value={maxPrice}
                 onChange={e => setMaxPrice(e.target.value)}
-                disabled={disabled}
-                className="w-full pl-7 pr-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm text-stone-700 placeholder:text-stone-300 focus:outline-none focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100 transition-all disabled:opacity-50 disabled:bg-neutral-100"
+                className="w-full pl-7 pr-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm text-stone-700 placeholder:text-stone-300 focus:outline-none focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100 transition-all"
               />
             </div>
           </div>
@@ -254,16 +251,11 @@ const PriceSlider = ({ minVal, maxVal, onApply, disabled }) => {
         <div className="flex gap-2 pt-1">
           <button
             type="submit"
-            disabled={disabled}
-            className={`flex-1 py-2.5 rounded-xl text-xs font-bold tracking-wide transition-all transform active:scale-95 ${
-              disabled 
-                ? 'bg-stone-100 text-stone-400 cursor-not-allowed' 
-                : 'bg-stone-800 text-white hover:bg-emerald-700 shadow-md hover:shadow-emerald-100'
-            }`}
+            className="flex-1 py-2.5 rounded-xl text-xs font-bold tracking-wide transition-all transform active:scale-95 bg-stone-800 text-white hover:bg-emerald-700 shadow-md hover:shadow-emerald-100"
           >
             Apply Filter
           </button>
-          {hasValues && !disabled && (
+          {hasValues && (
             <button
               type="button"
               onClick={handleClear}
@@ -274,14 +266,6 @@ const PriceSlider = ({ minVal, maxVal, onApply, disabled }) => {
           )}
         </div>
       </form>
-      
-      {disabled && (
-        <div className="bg-amber-50/80 rounded-lg p-2.5 text-center">
-          <p className="text-[11px] text-amber-700 font-medium">
-            Price filter is disabled when a category is selected.
-          </p>
-        </div>
-      )}
     </div>
   );
 };
@@ -302,6 +286,8 @@ const useDropdownPosition = (inputRef, dropdownRef, isOpen) => {
 
   return position;
 };
+
+const SHOP_FILTER_STORAGE_KEY = 'varnam:shop-filters';
 
 const Shop = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -354,6 +340,41 @@ const Shop = () => {
     }
   }, []);
 
+  // Restore last-used filters when landing on a bare /shop with no params in
+  // the URL (e.g. navigating back from a product page or another tab).
+  // A direct /category/:slug link or an explicit ?param URL is left alone.
+  useEffect(() => {
+    if (isOnCategoryRoute) return;
+    if (searchParams.toString().length > 0) return;
+    try {
+      const saved = sessionStorage.getItem(SHOP_FILTER_STORAGE_KEY);
+      if (!saved) return;
+      const parsed = JSON.parse(saved);
+      const p = new URLSearchParams();
+      Object.entries(parsed).forEach(([k, v]) => { if (v) p.set(k, v); });
+      if (p.toString()) setSearchParams(p, { replace: true });
+    } catch {
+      // ignore malformed/unavailable storage
+    }
+    // Runs once on mount only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist the active filters so they survive navigating away and back
+  // within the same browser session.
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(SHOP_FILTER_STORAGE_KEY, JSON.stringify({
+        category: activeCategory,
+        sort: activeSort !== 'newest' ? activeSort : '',
+        minPrice,
+        maxPrice,
+      }));
+    } catch {
+      // ignore storage write failures (e.g. private browsing)
+    }
+  }, [activeCategory, activeSort, minPrice, maxPrice]);
+
   // Fetch categories
   useEffect(() => {
     categoryAPI.getAll()
@@ -366,25 +387,17 @@ const Shop = () => {
     const fetchCatalog = async () => {
       setLoading(true);
       try {
-        let response;
-        if (activeCategory) {
-          response = await productAPI.getByCategory(activeCategory);
-          if (response.data?.success) {
-            setProducts(response.data.data || []);
-            setPagination({ total: response.data.count || 0, page: 1, pages: 1 });
-          }
-        } else {
-          response = await productAPI.getAll({
-            minPrice,
-            maxPrice,
-            sort: activeSort,
-            page: activePage,
-            limit: 12,
-          });
-          if (response.data?.success) {
-            setProducts(response.data.data || []);
-            setPagination(response.data.pagination || { total: 0, page: 1, pages: 1 });
-          }
+        const response = await productAPI.getAll({
+          category: activeCategory || undefined,
+          minPrice,
+          maxPrice,
+          sort: activeSort,
+          page: activePage,
+          limit: 12,
+        });
+        if (response.data?.success) {
+          setProducts(response.data.data || []);
+          setPagination(response.data.pagination || { total: 0, page: 1, pages: 1 });
         }
       } catch (err) {
         toast.error(err?.response?.data?.message || 'Failed to load products.');
@@ -456,14 +469,19 @@ const Shop = () => {
 
   const handleCategorySelect = (slug) => {
     const target = activeCategory === slug ? '' : slug;
-    updateUrlParams({ category: target, minPrice: '', maxPrice: '' });
+    updateUrlParams({ category: target });
   };
 
   const handlePriceApply = ({ min, max }) => {
-    updateUrlParams({ minPrice: min, maxPrice: max, category: '' });
+    updateUrlParams({ minPrice: min, maxPrice: max });
   };
 
   const handleClearAll = () => {
+    try {
+      sessionStorage.removeItem(SHOP_FILTER_STORAGE_KEY);
+    } catch {
+      // ignore storage failures
+    }
     if (isOnCategoryRoute) {
       navigate('/shop');
     } else {
@@ -554,7 +572,6 @@ const Shop = () => {
             minVal={minPrice}
             maxVal={maxPrice}
             onApply={handlePriceApply}
-            disabled={!!activeCategory}
           />
         </AccordionSection>
       </div>
@@ -624,8 +641,7 @@ const Shop = () => {
               <select
                 value={activeSort}
                 onChange={e => updateUrlParams({ sort: e.target.value })}
-                disabled={!!activeCategory}
-                className="px-4 py-2 rounded-xl border border-stone-200 bg-white text-sm font-medium text-stone-600 focus:outline-none focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100 transition-all cursor-pointer disabled:opacity-50 disabled:bg-stone-50"
+                className="px-4 py-2 rounded-xl border border-stone-200 bg-white text-sm font-medium text-stone-600 focus:outline-none focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100 transition-all cursor-pointer"
               >
                 <option value="newest">New Arrivals</option>
                 <option value="price-low">Price: Low → High</option>
@@ -670,7 +686,7 @@ const Shop = () => {
               </div>
 
               {/* Pagination */}
-              {pagination.pages > 1 && !activeCategory && (
+              {pagination.pages > 1 && (
                 <nav className="mt-12 flex items-center justify-center gap-2 pt-6 border-t border-stone-100">
                   <button
                     onClick={() => updateUrlParams({ page: activePage - 1 })}
