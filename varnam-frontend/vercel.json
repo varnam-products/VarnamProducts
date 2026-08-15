@@ -13,6 +13,14 @@
       "destination": "/shop/index.html"
     },
     {
+      "source": "/shop/:slug",
+      "destination": "/shop/:slug/index.html"
+    },
+    {
+      "source": "/category/:slug",
+      "destination": "/category/:slug/index.html"
+    },
+    {
       "source": "/b2b-wholesale",
       "destination": "/b2b-wholesale/index.html"
     },
