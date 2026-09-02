@@ -5,6 +5,7 @@ import { useGSAP } from '@gsap/react'
 import toast from 'react-hot-toast'
 import { contactAPI, settingsAPI } from '../services/api'
 import Seo, { SITE_URL } from '../components/common/Seo'
+import CONTACT_HERO_IMAGE from "../assets/ContactHero.png"
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -74,6 +75,11 @@ function useReveal(selector) {
   return ref
 }
 
+/* ── Hero background photo — glowing world/globe, sourced from Unsplash   ─┐
+   (free-to-use license, no attribution required). Layered UNDER the      │
+   brand gradient via CSS multiple-backgrounds, so if it's ever slow/     │
+   unreachable the gradient still renders underneath — no broken look.  ──┘ */
+
 /* ── Hero ─────────────────────────────────────────────────────────────── */
 function ContactHero() {
   const ref = useRef(null)
@@ -84,11 +90,14 @@ function ContactHero() {
   }, { scope: ref })
 
   return (
-    <section ref={ref} style={{ position: 'relative', overflow: 'hidden' }}>
-      <div style={{
-        position: 'absolute', inset: 0, zIndex: 0,
-        background: 'linear-gradient(160deg, #0D2B1E 0%, #1B4332 40%, #2D6A4F 75%, #1A3D2B 100%)',
-      }} />
+    <section ref={ref} style={{
+      position: 'relative', overflow: 'hidden',
+      backgroundImage: `linear-gradient(160deg, rgba(13,43,30,0.65) 0%, rgba(27,67,50,0.7) 40%, rgba(45,106,79,0.65) 75%, rgba(26,61,43,0.65) 100%), url(${CONTACT_HERO_IMAGE})`,
+      backgroundSize: 'auto, cover',
+      backgroundPosition: 'center, center',
+      backgroundRepeat: 'no-repeat, no-repeat',
+      backgroundColor: '#0D2B1E',
+    }}>
       <div style={{
         position: 'absolute', zIndex: 0, top: '-20%', right: '-10%', width: '55%', height: '120%',
         background: 'radial-gradient(ellipse at center, rgba(200,137,58,0.14) 0%, transparent 65%)',
