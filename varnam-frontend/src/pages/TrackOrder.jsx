@@ -9,6 +9,7 @@ import { useGSAP } from '@gsap/react'
 import toast from 'react-hot-toast'
 import { orderAPI } from '../services/api'
 import Seo from '../components/common/Seo'
+import TRACK_HERO_IMAGE from "../assets/TrackOrderHero.png"
 
 /* ─── helpers ─────────────────────────────────────────────────────────────── */
 const fmtDate = (d) =>
@@ -93,6 +94,11 @@ const IconRefresh = () => (
     <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
   </svg>
 )
+
+/* ─── Hero background photo — map/route themed, sourced from Unsplash    ─┐
+   (free-to-use license, no attribution required). Layered UNDER the      │
+   brand gradient via CSS multiple-backgrounds, so if it's ever slow/     │
+   unreachable the gradient still renders underneath — no broken look.  ──┘ */
 
 /* ─── StatusBadge ────────────────────────────────────────────────────────── */
 function StatusBadge({ status }) {
@@ -663,13 +669,17 @@ export default function TrackOrder() {
 
       {/* ── Hero header ───────────────────────────────────────────────── */}
       <div ref={heroRef} style={{
-        background: 'linear-gradient(160deg,#1B4332 0%,#2D6A4F 55%,#40916C 100%)',
+        backgroundImage: `linear-gradient(160deg,rgba(27,67,50,0.90) 0%,rgba(45,106,79,0.84) 55%,rgba(64,145,108,0.78) 100%), url(${TRACK_HERO_IMAGE})`,
+        backgroundSize: 'auto, cover',
+        backgroundPosition: 'center, center',
+        backgroundRepeat: 'no-repeat, no-repeat',
+        backgroundColor: '#1B4332',
         padding: '56px 0 80px',
         position: 'relative',
         overflow: 'hidden',
       }}>
         {/* BG decoration */}
-        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 2 }}>
           <div style={{ position: 'absolute', top: -60, right: -60, width: 300, height: 300, borderRadius: '50%', background: 'rgba(82,183,136,0.1)', filter: 'blur(60px)' }} />
           <div style={{ position: 'absolute', bottom: -40, left: -40, width: 240, height: 240, borderRadius: '50%', background: 'rgba(200,137,58,0.07)', filter: 'blur(50px)' }} />
           <svg style={{ position: 'absolute', right: 0, bottom: 0, height: '100%', opacity: 0.05 }} viewBox="0 0 200 400" fill="none">
