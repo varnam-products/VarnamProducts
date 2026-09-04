@@ -5,6 +5,7 @@ import { useGSAP } from '@gsap/react'
 import toast from 'react-hot-toast'
 import { productAPI, b2bAPI, settingsAPI } from '../services/api'
 import Seo, { SITE_URL } from '../components/common/Seo'
+import TRUST_BANNER_IMAGE from "../assets/B2B.png"
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -128,6 +129,39 @@ function useReveal(selector) {
   return ref
 }
 
+/* ── Shared dark-section background image (crates/warehouse motif) ─────── */
+function DarkSectionBg({ opacity = 0.09 }) {
+  return (
+    <svg
+      aria-hidden="true"
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity, pointerEvents: 'none' }}
+      viewBox="0 0 900 500"
+      preserveAspectRatio="xMidYMid slice"
+      fill="none"
+    >
+      <defs>
+        <pattern id="b2bDotGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="1.3" fill="#FDF6EC" />
+        </pattern>
+      </defs>
+      <rect width="900" height="500" fill="url(#b2bDotGrid)" />
+      {/* stacked crate outlines */}
+      <rect x="40" y="60" width="66" height="66" rx="4" stroke="#E9B87A" strokeWidth="1.4" />
+      <rect x="118" y="60" width="66" height="66" rx="4" stroke="#E9B87A" strokeWidth="1.4" opacity="0.6" />
+      <rect x="79" y="130" width="66" height="66" rx="4" stroke="#E9B87A" strokeWidth="1.4" opacity="0.35" />
+      <rect x="720" y="330" width="80" height="80" rx="5" stroke="#52B788" strokeWidth="1.4" />
+      <rect x="640" y="360" width="60" height="60" rx="4" stroke="#52B788" strokeWidth="1.4" opacity="0.5" />
+      {/* delivery truck silhouette, bottom-right */}
+      <g transform="translate(600 40)" opacity="0.45">
+        <rect x="0" y="14" width="70" height="34" rx="2" stroke="#FDF6EC" strokeWidth="1.4" />
+        <path d="M70 24h20l16 16v8H70z" stroke="#FDF6EC" strokeWidth="1.4" />
+        <circle cx="20" cy="52" r="8" stroke="#FDF6EC" strokeWidth="1.4" />
+        <circle cx="86" cy="52" r="8" stroke="#FDF6EC" strokeWidth="1.4" />
+      </g>
+    </svg>
+  )
+}
+
 /* ── Hero ─────────────────────────────────────────────────────────────── */
 const HERO_IMAGE = '/B2B/B2B.png'
 
@@ -148,6 +182,7 @@ function B2BHero({ whatsappHref }) {
         position: 'absolute', inset: 0, zIndex: 0,
         background: 'linear-gradient(160deg, #0D2B1E 0%, #1B4332 40%, #2D6A4F 75%, #1A3D2B 100%)',
       }} />
+      <DarkSectionBg opacity={0.1} />
       <div style={{
         position: 'absolute', zIndex: 0, top: '-20%', right: '-10%', width: '55%', height: '120%',
         background: 'radial-gradient(ellipse at center, rgba(200,137,58,0.14) 0%, transparent 65%)',
@@ -271,6 +306,50 @@ function WhoWeSupply() {
   )
 }
 
+/* ── Trust banner — real photo, breaks up the flat colour blocks ───────── */
+function TrustBanner() {
+  const ref = useReveal('.trust-banner-reveal')
+  return (
+    <section ref={ref} className="home-section" style={{ background: '#FDF6EC', paddingTop: 0 }}>
+      <div className="container-main">
+        <div className="trust-banner-reveal" style={{
+          position: 'relative', overflow: 'hidden', borderRadius: 24,
+          minHeight: 260, display: 'flex', alignItems: 'center',
+          boxShadow: '0 20px 50px rgba(45,106,79,0.16)',
+        }}>
+          <img
+            src={TRUST_BANNER_IMAGE}
+            alt="Varnam Foods natural, cold-pressed ingredients sourced directly from farmers"
+            loading="lazy"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(100deg, rgba(13,43,30,0.92) 0%, rgba(13,43,30,0.72) 40%, rgba(13,43,30,0.25) 75%, rgba(13,43,30,0.05) 100%)',
+          }} />
+          <div style={{ position: 'relative', zIndex: 1, padding: 'clamp(28px,4vw,52px)', maxWidth: 460 }}>
+            <span style={{
+              fontFamily: 'var(--font-body)', fontSize: 10, color: '#E9B87A', letterSpacing: '0.26em',
+              textTransform: 'uppercase',
+            }}>
+              Farm to Warehouse
+            </span>
+            <h3 style={{
+              fontFamily: 'var(--font-heading)', color: '#FDF6EC', fontSize: 'clamp(1.3rem,2.6vw,1.8rem)',
+              lineHeight: 1.25, margin: '10px 0 12px',
+            }}>
+              Sourced Directly From Certified Organic Farms Across Tamil Nadu
+            </h3>
+            <p style={{ fontFamily: 'var(--font-body)', color: 'rgba(253,246,236,0.68)', fontSize: 13.5, lineHeight: 1.7, margin: 0 }}>
+              No middlemen, no shortcuts — just consistent, traceable quality your customers can taste and trust.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 /* ── Why Partner ──────────────────────────────────────────────────────── */
 function WhyPartner() {
   const ref = useReveal('.wp-card')
@@ -280,6 +359,7 @@ function WhyPartner() {
         position: 'absolute', inset: 0, zIndex: 0,
         background: 'linear-gradient(160deg, #0D2B1E 0%, #1B4332 40%, #2D6A4F 75%, #1A3D2B 100%)',
       }} />
+      <DarkSectionBg opacity={0.08} />
       <div className="container-main" style={{ position: 'relative', zIndex: 10 }}>
         <SectionHeading eyebrow="Why Partner With Us" title="Why Varnam Foods" dark />
         <div className="b2b-grid-3">
@@ -375,6 +455,7 @@ function HowOrderingWorks() {
         position: 'absolute', inset: 0, zIndex: 0,
         background: 'linear-gradient(160deg, #0D2B1E 0%, #1B4332 40%, #2D6A4F 75%, #1A3D2B 100%)',
       }} />
+      <DarkSectionBg opacity={0.08} />
       <div className="container-main" style={{ position: 'relative', zIndex: 10 }}>
         <SectionHeading eyebrow="How Ordering Works" title="Four Simple Steps" dark />
         <div className="why-grid">
@@ -694,6 +775,7 @@ function FinalCTA({ whatsappHref }) {
         position: 'absolute', inset: 0, zIndex: 0,
         background: 'linear-gradient(160deg, #0D2B1E 0%, #1B4332 40%, #2D6A4F 75%, #1A3D2B 100%)',
       }} />
+      <DarkSectionBg opacity={0.08} />
       <div className="container-main final-cta-reveal" style={{ position: 'relative', zIndex: 10, textAlign: 'center' }}>
         <h2 style={{
           fontFamily: 'var(--font-heading)', color: '#FDF6EC', fontSize: 'clamp(1.5rem,3.6vw,2.2rem)',
@@ -766,6 +848,7 @@ export default function B2BWholesale() {
       />
       <B2BHero whatsappHref={whatsappHref} />
       <WhoWeSupply />
+      <TrustBanner />
       <WhyPartner />
       <PacksAndLabel whatsappHref={whatsappHref} />
       <HowOrderingWorks />
