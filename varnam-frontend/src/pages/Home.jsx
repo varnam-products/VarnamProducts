@@ -809,7 +809,7 @@ const WHY = [
   {
     Icon: IconSprout,
     title: 'Farm Direct',
-    body: 'We work directly with certified organic farmers across Tamil Nadu. No middlemen â€” fresh from field to your door.',
+    body: 'We work directly with certified organic farmers across Tamil Nadu. No middlemen” fresh from field to your door.',
     stat: '12+ farms',
   },
   {
