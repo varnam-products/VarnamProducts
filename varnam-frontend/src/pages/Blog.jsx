@@ -243,7 +243,7 @@ export default function Blog() {
           <>
             <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {posts.map((post, i) => (
-                <div key={post._id} className={`blog-card-anim ${featuredEligible && i === 0 ? 'sm:col-span-2' : ''}`}>
+                <div key={post._id} className={`blog-card-anim ${featuredEligible && i === 0 ? 'sm:col-span-2 lg:col-span-3' : ''}`}>
                   <BlogCard post={post} featured={featuredEligible && i === 0} />
                 </div>
               ))}
